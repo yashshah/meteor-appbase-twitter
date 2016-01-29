@@ -5,10 +5,18 @@
 <body>
   <h1>Welcome to Meteor!</h1>
 
-  {{> hello}}
+	Tweets
+	 {{#each tweets}}
+	 	{{> tweetItem}}
+	{{/each}} 
 </body>
 
-<template name="hello">
-  <button>Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
+<template name="tweetItem">
+	<div>
+		<img src="{{picture}}" alt="" />
+		<a href="https://www.twitter.com/{{user}}">{{user}}</a>
+		{{date}} 
+
+		{{tweet}}
+	</div>
 </template>
