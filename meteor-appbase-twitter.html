@@ -1,15 +1,15 @@
 <head>
-  <title>meteor-appbase-twitter</title>
+	<title>meteor-appbase-twitter</title>
 </head>
 
 <body>
 	<div class="container">
-			<h1>Tweets</h1>
+		<h1>Tweets</h1>
 		<div class="col s12 m8 offset-m2 l6 offset-l3">
-            {{> search_box}}
-	        <div class="card-panel grey lighten-5 z-depth-1">
+			{{> search_box}}
+			<div class="card-panel grey lighten-5 z-depth-1">
 				{{#each tweets}}
-				 	{{> tweetItem}}
+					{{> tweetItem}}
 				{{/each}} 
 			</div>
 		</div>
@@ -25,12 +25,14 @@
 			<span class="black-text">
 				<a href="https://www.twitter.com/{{user}}" target="_blank">{{user}}</a> 
 				{{date}}
-				<p>{{userTweet}}</p>
+				<p>
+					{{userTweet}}
+				</p>
 			</span>
 		</div>
 	</div>
 </template>
 
 <template name="search_box">
-        <input id="searchBox" type = "text" placeholder="Search the tweets" />
+	<input id="searchBox" type = "text" placeholder="Search the tweets" />
 </template>
