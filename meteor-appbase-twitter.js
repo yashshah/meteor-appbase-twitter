@@ -22,10 +22,13 @@ if (Meteor.isClient) {
 
 if (Meteor.isServer) {
   Meteor.startup(function () {
-    Meteor.publish('tweets', function() {
-      console.log("Done")
-     return Tweets.find();
+    var appbaseRef = new Appbase({
+      url: 'https://scalr.api.appbase.io',
+      appname: 'meteor-twitter',
+      username: '2QAwq649G',
+      password: '02c2585c-372f-43c9-8a62-0d271a29c16e'
     });
+
     // code to run on server at startup
     var Twit = Meteor.npmRequire('twit');
     var conf = JSON.parse(Assets.getText('twitter.json'));
@@ -51,10 +54,19 @@ if (Meteor.isServer) {
 
           console.log(userScreenName + '('+ userName + ')' + 'said '+ userTweet + 'at '+ tweetDate);
           console.log('=======================================')
-          Tweets.insert({user: userName, userscreen: userScreenName, tweet: userTweet, picture: profileImg, date: tweetDate}, function(error){
-          if(error)
-            console.log(error);
-          });
+          /* one big difference: all the normal methods: index(),
+               update(), delete(), get() and search() are synchronous. */
+           // see how we use index() method here.
+          var indexed = appbaseRef.index({
+            type: 'tweets',
+            body: {
+              user: userName, 
+              userscreen: userScreenName, 
+              tweet: userTweet, 
+              picture: profileImg, 
+              date: tweetDate
+            }
+          })
         }))
   });
 }
