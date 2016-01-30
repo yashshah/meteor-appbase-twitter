@@ -66,7 +66,7 @@ appbaseRef.searchStream({
     }
   }
 }).on('data', function(res) {
-  r.push(res._source)
+  r.unshift(res._source)
 })
 
     // This code only runs on the client
