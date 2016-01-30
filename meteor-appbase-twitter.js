@@ -1,27 +1,62 @@
 Tweets = new Mongo.Collection('tweets');
 
 if (Meteor.isClient) {
+
+  var r = new ReactiveArray();
    var appbaseRef = new Appbase({
       url: 'https://scalr.api.appbase.io',
       appname: 'meteor-twitter',
-      username: '2QAwq649G',
-      password: '02c2585c-372f-43c9-8a62-0d271a29c16e'
+      username: 'LPQQpGHXV',
+      password: '48006b64-2785-451b-bea0-070227dca401'
+    });
+   var searchInput=""
+   Template.search_box.events({
+        'keyup input': function(e, template) {
+          if(searchInput!=e.target.value && e.target.value!=""){
+                      console.log("search wala")
+            appbaseRef.search({
+                type: 'tweets',
+                size: 10,
+                 body: {
+                  query: {
+                    match: {
+                      userTweet: {
+                        query: e.target.value,
+                        operator: "and"
+                      }
+                    }
+                }}
+              }).on('data', function(res) {
+                res.hits.hits.map(function(object){
+                    r.clear()
+                    res.hits.hits.map(function(object){
+                        r.push(object._source)
+                    })
+                  })
+              })
+          } 
+          else if(searchInput!=e.target.value && e.target.value==""){
+                      console.log("clear wala")
+
+            appbaseRef.search({
+                type: 'tweets',
+                size: 10,
+                 body: {
+                    query: {
+                        match_all: {}
+                    }
+                }
+              }).on('data', function(res) {
+                r.clear()
+                res.hits.hits.map(function(object){
+                      r.push(object._source)
+                  })
+              })
+          }
+          searchInput = e.target.value
+        }
     });
 
-  var r = new ReactiveArray();
-  appbaseRef.search({
-      type: 'tweets',
-      size: 10,
-       body: {
-          query: {
-              match_all: {}
-          }
-      }
-    }).on('data', function(res) {
-      res.hits.hits.map(function(object){
-            r.push(object._source)
-        })
-    })
 
   appbaseRef.searchStream({
     type: 'tweets',
@@ -47,8 +82,8 @@ if (Meteor.isServer) {
     var appbaseRef = new Appbase({
       url: 'https://scalr.api.appbase.io',
       appname: 'meteor-twitter',
-      username: '2QAwq649G',
-      password: '02c2585c-372f-43c9-8a62-0d271a29c16e'
+      username: 'LPQQpGHXV',
+      password: '48006b64-2785-451b-bea0-070227dca401'
     });
 
     // code to run on server at startup
@@ -84,7 +119,7 @@ if (Meteor.isServer) {
             body: {
               user: userName, 
               userscreen: userScreenName, 
-              tweet: userTweet, 
+              userTweet: userTweet, 
               picture: profileImg, 
               date: tweetDate
             }
