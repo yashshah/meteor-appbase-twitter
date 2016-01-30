@@ -1,23 +1,45 @@
 Tweets = new Mongo.Collection('tweets');
 
 if (Meteor.isClient) {
-  Meteor.subscribe('tweets')
-  console.log(Tweets.find())
+   var appbaseRef = new Appbase({
+      url: 'https://scalr.api.appbase.io',
+      appname: 'meteor-twitter',
+      username: '2QAwq649G',
+      password: '02c2585c-372f-43c9-8a62-0d271a29c16e'
+    });
+
+  var r = new ReactiveArray();
+  appbaseRef.search({
+      type: 'tweets',
+      size: 10,
+       body: {
+          query: {
+              match_all: {}
+          }
+      }
+    }).on('data', function(res) {
+      res.hits.hits.map(function(object){
+            r.push(object._source)
+        })
+    })
+
+  appbaseRef.searchStream({
+    type: 'tweets',
+     body: {
+        query: {
+            match_all: {}
+        }
+    }
+  }).on('data', function(res) {
+    r.push(res._source)
+  })
+
     // This code only runs on the client
   Template.body.helpers({
     tweets: function () {
-      console.log("Found")
-      return Tweets.find({});
+      return r.list();
     }
   });
-    // This code only runs on the client
-  // Template.body.helpers({
-  //   tweets: [
-  //     { tweet: "This is task 1" , date: "yo", user: "he"},
-  //     { tweet: "This is task 2" , date: "yo", user: "he"},
-  //     { tweet: "This is task 3", date: "yo", user: "he" }
-  //   ]
-  // });
 }
 
 if (Meteor.isServer) {
